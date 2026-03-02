@@ -20,6 +20,7 @@ Ubah Tautan Kehadiran Acara
 <?= $this->section("konten") ?>
 
 <form action="<?= base_url("admin/hadir/ubah") ?>" method="post" data-parsley-validate>
+<?= csrf_field() ?>
     <div class="row">
         <div class="col-lg-1">
             <div class="form-group">

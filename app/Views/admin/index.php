@@ -165,6 +165,7 @@ Selamat Datang <span class="tx-primary">Arek Niskalarasi ✨</span>
                 <h5 class="modal-title font-weight-bold">Ubah Kata Sandi Default</h5>
             </div>
             <form action="<?= base_url("admin/akun/ubah_pass") ?>" method="post" id="form_pass" data-parsley-validate>
+            <?= csrf_field() ?>
                 <div class="modal-body">
                     <p class="font-weight-bold tx-12 tx-danger">Ups! kamu harus mengganti password default demi keamanan akunmu!</p>
                     <div id="alert_pass" style="display: none">

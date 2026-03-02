@@ -262,16 +262,28 @@ class RaporControl extends BaseController
             ->get()
             ->getResult();
 
+        $db = \Config\Database::connect();
+        $awal_esc = $db->escape($awal);
+        $akhir_esc = $db->escape($akhir);
+        $first_arrivals_raw = $db->query("
+            SELECT kode_acara, MIN(waktu) AS first_waktu
+            FROM hadir
+            WHERE waktu >= {$awal_esc} AND waktu <= {$akhir_esc}
+            GROUP BY kode_acara
+        ")->getResult();
+
+        $first_arrivals = [];
+        foreach ($first_arrivals_raw as $fa) {
+            $first_arrivals[$fa->kode_acara] = $fa->first_waktu;
+        }
+
         $nilai4a = 0;
         foreach($total_hadir as $h)
         {
-            $pertama = $this->hadir->where("kode_acara",$h->kode_acara)
-                ->orderBy("waktu","asc")
-                ->where("waktu >=",$awal)
-                ->where("waktu <=",$akhir)
-                ->first();
+            $first_waktu = $first_arrivals[$h->kode_acara] ?? null;
+            if ($first_waktu === null) continue;
 
-            $waktu_telat = date("H:i", strtotime('+45 minutes', strtotime($pertama->waktu)));
+            $waktu_telat = date("H:i", strtotime('+45 minutes', strtotime($first_waktu)));
             $waktu_asli = date("H:i", strtotime($h->waktu));
 
             if($waktu_asli > $waktu_telat)
@@ -279,7 +291,7 @@ class RaporControl extends BaseController
                 ++$nilai4a;
             }
         }
-        $nilai4b = array_key_last($total_hadir) + 1;
+        $nilai4b = count($total_hadir);
 
         $nilai5a = $this->hadir->where("nrp",$query1->nrp)
             ->where("tipe","0")

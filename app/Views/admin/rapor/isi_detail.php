@@ -63,6 +63,7 @@
             <hr>
 
             <form action="<?= base_url("admin/rapor/isi/kirim/") ?>" method="post" data-parsley-validate>
+            <?= csrf_field() ?>
                 <p class="tx-16 tx-bold tx-primary">Kolom Penilaian:</p>
 
                 <div class="row">

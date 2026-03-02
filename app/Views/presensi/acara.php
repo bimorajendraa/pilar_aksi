@@ -58,6 +58,7 @@ Kehadiran Acara HMSI
             </tr>
         </table>
         <form action="<?= base_url("/hadir") ?>" method="post">
+            <?= csrf_field() ?>
             <input type="hidden" id="form_kode" name="form_kode" value="<?= $data->kode_acara ?>">
             <input type="hidden" id="form_nrp" name="form_nrp">
             <button type="submit" class="mt-2 btn btn-primary btn-block btn-xs"><i data-feather="check-circle"></i> Klik untuk Hadir</button>
@@ -71,6 +72,7 @@ Kehadiran Acara HMSI
         <span class="mg-t-25">Maaf, data yang kamu masukkan <b>tidak terdaftar</b> di sistem kami.
             Silakan melanjutkan registrasi manual menggunakan formulir di bawah ini.</span>
         <form action="<?= base_url("/hadir_manual") ?>" method="post">
+            <?= csrf_field() ?>
             <input type="hidden" id="form2_kode" name="form2_kode" value="<?= $data->kode_acara ?>">
             <input type="hidden" id="form2_nrp" name="form2_nrp">
             <div class="form-group mt-3">

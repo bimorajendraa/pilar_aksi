@@ -54,6 +54,7 @@
     <div class="modal-dialog wd-sm-400" role="document">
         <div class="modal-content bg-white">
             <form action="<?= base_url("admin/sekre/piket/ubah") ?>" method="post">
+            <?= csrf_field() ?>
                 <div class="modal-header">
                     <h5 class="modal-title font-weight-bold">Pindah Jadwal Piket</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">

@@ -22,6 +22,7 @@ Daftar Nilai Rapor Fungsionaris
     <?php for($j = $i ; $j < $i+6 ; $j+=2): ?>
         <div class="col-12 col-md-6 col-lg-4">
             <form action="<?= base_url("admin/rapor/hasil") ?>" method="post" id="hasil<?= $j ?>">
+            <?= csrf_field() ?>
                 <input type="hidden" id="id_pengurus" name="id_pengurus" value="<?= $data[$j]->id_pengurus ?>">
                 <input type="hidden" id="id_bulan" name="id_bulan" value="<?= $data[$j]->id_bulan ?>">
                 <a href="#" onclick="document.getElementById('hasil<?= $j ?>').submit();">

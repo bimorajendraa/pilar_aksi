@@ -23,11 +23,8 @@ class App extends BaseConfig
      *
      * @var string
      */
-    // public $baseURL = 'https://hmsi-its.my.id/';
-
-    // public $baseURL = 'http://localhost:8080/hmsi_niskalarasi/public/';
-    // with port 8000
-    public $baseURL = 'http://localhost:80/hmsi_niskalarasi/public';
+    // Base URL is set via .env file: app.baseURL
+    public $baseURL = 'http://localhost:8080/';
 
     // public $baseURL = 'https://ec2-108-137-90-238.ap-southeast-3.compute.amazonaws.com/';
 
@@ -42,7 +39,7 @@ class App extends BaseConfig
      *
      * @var string
      */
-    public $indexPage = 'index.php';
+    public $indexPage = '';
 
     /**
      * --------------------------------------------------------------------------

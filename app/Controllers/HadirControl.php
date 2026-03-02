@@ -44,27 +44,34 @@ class HadirControl extends BaseController
 
         if($this->id_pengurus < 20000)
         {
-            $query2 = $this->acara->select("(SELECT COUNT(kode_acara) FROM hadir WHERE acara.kode_acara = hadir.kode_acara GROUP BY kode_acara) as jumlah")
-                ->select(["acara.kode_acara","nama_acara","tanggal","nama_departemen","lokasi","nama","jabatan","status"])
-                ->join("pengurus","acara.pembuat = pengurus.id_pengurus")
-                ->join("mhs","pengurus.nrp = mhs.nrp")
-                ->join("departemen","pengurus.id_departemen = departemen.id_departemen")
-                ->orderBy("tanggal","desc")
-                ->get()
-                ->getResult();
+            $db = \Config\Database::connect();
+            $query2 = $db->query("
+                SELECT a.kode_acara, a.nama_acara, a.tanggal, d.nama_departemen, a.lokasi, m.nama, p.jabatan, a.status,
+                       COALESCE(hc.jumlah, 0) AS jumlah
+                FROM acara a
+                LEFT JOIN (SELECT kode_acara, COUNT(*) AS jumlah FROM hadir GROUP BY kode_acara) hc ON hc.kode_acara = a.kode_acara
+                JOIN pengurus p ON a.pembuat = p.id_pengurus
+                JOIN mhs m ON p.nrp = m.nrp
+                JOIN departemen d ON p.id_departemen = d.id_departemen
+                ORDER BY a.tanggal DESC
+            ")->getResult();
 
             return view("admin/hadir/index",
                 ["data" => $query2, "breadcrumbs" => $breadcrumbs]);
         }
-        $query3 = $this->acara->select("(SELECT COUNT(kode_acara) FROM hadir WHERE acara.kode_acara = hadir.kode_acara GROUP BY kode_acara) as jumlah")
-            ->select(["acara.kode_acara","nama_acara","tanggal","nama_departemen","lokasi","nama","jabatan","status"])
-            ->where("acara.id_departemen",$query1->id_departemen)
-            ->join("pengurus","acara.pembuat = pengurus.id_pengurus")
-            ->join("mhs","pengurus.nrp = mhs.nrp")
-            ->join("departemen","pengurus.id_departemen = departemen.id_departemen")
-            ->orderBy("tanggal","desc")
-            ->get()
-            ->getResult();
+        $db = \Config\Database::connect();
+        $id_dept = $db->escape($query1->id_departemen);
+        $query3 = $db->query("
+            SELECT a.kode_acara, a.nama_acara, a.tanggal, d.nama_departemen, a.lokasi, m.nama, p.jabatan, a.status,
+                   COALESCE(hc.jumlah, 0) AS jumlah
+            FROM acara a
+            LEFT JOIN (SELECT kode_acara, COUNT(*) AS jumlah FROM hadir GROUP BY kode_acara) hc ON hc.kode_acara = a.kode_acara
+            JOIN pengurus p ON a.pembuat = p.id_pengurus
+            JOIN mhs m ON p.nrp = m.nrp
+            JOIN departemen d ON p.id_departemen = d.id_departemen
+            WHERE a.id_departemen = {$id_dept}
+            ORDER BY a.tanggal DESC
+        ")->getResult();
         return view("admin/hadir/index",
             ["data" => $query3, "breadcrumbs" => $breadcrumbs]);
     }
@@ -148,28 +155,38 @@ class HadirControl extends BaseController
         $this->breadcrumbs->add("Detail Acara", "/admin/hadir/detail/$kode_acara");
         $breadcrumbs = $this->breadcrumbs->render();
 
-        $query1 = $this->acara->select(["*","(SELECT COUNT(kode_acara) FROM hadir WHERE acara.kode_acara = hadir.kode_acara GROUP BY kode_acara) as jumlah"])
-            ->where("kode_acara",$kode_acara)
-            ->first();
+        $db = \Config\Database::connect();
+        $kode_escaped = $db->escape($kode_acara);
+        $query1 = $db->query("
+            SELECT a.*, COALESCE(hc.jumlah, 0) AS jumlah
+            FROM acara a
+            LEFT JOIN (SELECT kode_acara, COUNT(*) AS jumlah FROM hadir GROUP BY kode_acara) hc ON hc.kode_acara = a.kode_acara
+            WHERE a.kode_acara = {$kode_escaped}
+            LIMIT 1
+        ")->getRow();
 
         $query2 = $this->pengurus->where("id_pengurus",$query1->narahubung)
             ->join("mhs","pengurus.nrp = mhs.nrp")
             ->first();
 
-        $writer = new PngWriter();
-        $qr_code = QrCode::create(base_url("/$query1->kode_acara"))
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(new ErrorCorrectionLevelMedium())
-            ->setSize(500)
-            ->setMargin(20)
-            ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->setForegroundColor(new Color(0, 0, 0))
-            ->setBackgroundColor(new Color(255, 255, 255));
-        $logo = Logo::create( FCPATH .'pic/niskalarasi-logo.png')
-            ->setResizeToWidth(100);
+        $qr_cache_path = WRITEPATH . "cache/qr_{$kode_acara}.png";
+        if (!file_exists($qr_cache_path)) {
+            $writer = new PngWriter();
+            $qr_code = QrCode::create(base_url("/$query1->kode_acara"))
+                ->setEncoding(new Encoding('UTF-8'))
+                ->setErrorCorrectionLevel(new ErrorCorrectionLevelMedium())
+                ->setSize(500)
+                ->setMargin(20)
+                ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
+                ->setForegroundColor(new Color(0, 0, 0))
+                ->setBackgroundColor(new Color(255, 255, 255));
+            $logo = Logo::create(FCPATH . 'pic/niskalarasi-logo.png')
+                ->setResizeToWidth(100);
 
-        $hasil = $writer->write($qr_code, $logo);
-        $hasil_url = $hasil->getDataUri();
+            $hasil = $writer->write($qr_code, $logo);
+            file_put_contents($qr_cache_path, $hasil->getString());
+        }
+        $hasil_url = 'data:image/png;base64,' . base64_encode(file_get_contents($qr_cache_path));
 
         return view("admin/hadir/detail",
             ["data" => $query1, "data2" => $query2, "data3" => $hasil_url, "breadcrumbs" => $breadcrumbs]);

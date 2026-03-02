@@ -35,11 +35,12 @@ class Filters extends BaseConfig
      */
     public $globals = [
         'before' => [
+            'csrf',
             // 'honeypot',
-            // 'csrf',
             // 'invalidchars',
         ],
         'after' => [
+            // Toolbar only in development (auto-disabled in production by CI4)
             'toolbar',
             // 'honeypot',
             // 'secureheaders',

@@ -17,6 +17,7 @@ Kehadiran Piket Ruang Kesekretariatan
 
 <div class="row">
     <form action="<?= base_url("admin/sekre/piket/hadir") ?>" method="post" data-parsley-validate class="col-md-6 col-lg-4 mg-b-10">
+    <?= csrf_field() ?>
         <div class="card card-body">
             <div class="marker marker-ribbon marker-primary pos-absolute t-10 l-0">Kedatangan piket<br></div>
             <p class="mg-t-30">
@@ -68,6 +69,7 @@ Kehadiran Piket Ruang Kesekretariatan
     </div>
 
     <form action="<?= base_url("admin/sekre/piket/pulang") ?>" method="post" data-parsley-validate class="col-md-6 col-lg-4 mb-b-10">
+    <?= csrf_field() ?>
         <div class="card card-body">
             <div class="marker marker-ribbon marker-primary pos-absolute t-10 l-0">Kepulangan piket<br></div>
             <p class="mg-t-30">

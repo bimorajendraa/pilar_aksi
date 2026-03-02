@@ -50,6 +50,7 @@ Kehadiran Acara HMSI
     <div class="card card-body tx-white bg-success ht-100p overflow-hidden">
         <div class="marker pos-absolute t-10 l-10">Hasil Pencarian: <span class="tx-primary" id="cek_nrp"></span></div>
         <form action="<?= base_url("/hadir_panitia") ?>" method="post">
+            <?= csrf_field() ?>
             <table class="mg-t-25">
                 <tr>
                     <td style="min-width: 50px">Nama</td>

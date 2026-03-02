@@ -45,6 +45,7 @@
             </td>
             <td class="align-middle tx-center">
                 <form action="<?= base_url("admin/hadir/rekap/detail") ?>" method="post">
+                <?= csrf_field() ?>
                     <input type="hidden" name="kode_acara" id="kode_acara" value="<?= $d->kode_acara ?>">
                     <button type="submit" class="btn btn-primary"><i data-feather="file-text"></i> Tampilkan</button>
                 </form>

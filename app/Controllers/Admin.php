@@ -112,7 +112,7 @@ class Admin extends BaseController
         }
 
         // $query3 = [];
-        $query3 = $this->nilai->select(["pengurus.id_departemen", "CAST((CAST(SUM(nilai.nilai) / (COUNT(nilai.id_pengurus) / 2) AS INT) / 2) AS INT) AS rerata"])
+        $query3 = $this->nilai->select(["pengurus.id_departemen", "CAST((CAST(SUM(nilai.nilai) / (COUNT(nilai.id_pengurus) / 2) AS SIGNED) / 2) AS SIGNED) AS rerata"])
             ->where("nilai.id_indikator <=", 2)
             ->where("nilai.id_bulan", $id_bulan)
             ->join("pengurus", "nilai.id_pengurus = pengurus.id_pengurus")
@@ -122,7 +122,7 @@ class Admin extends BaseController
             ->getResult();
 
         // $query4 = [];
-        $query4 = $this->nilai->select(["pengurus.id_departemen", "CAST((CAST(SUM(nilai.nilai) / (COUNT(nilai.id_pengurus) / 3) AS INT) / 3) AS INT) AS rerata"])
+        $query4 = $this->nilai->select(["pengurus.id_departemen", "CAST((CAST(SUM(nilai.nilai) / (COUNT(nilai.id_pengurus) / 3) AS SIGNED) / 3) AS SIGNED) AS rerata"])
             ->where("nilai.id_indikator >=", 3)
             ->where("nilai.id_bulan", $id_bulan)
             ->join("pengurus", "nilai.id_pengurus = pengurus.id_pengurus")
@@ -149,12 +149,19 @@ class Admin extends BaseController
         $this->breadcrumbs->add("Data Mahasiswa", "/admin/data/nama");
         $breadcrumbs = $this->breadcrumbs->render();
 
-        $query1 = $this->mhs->get()
+        $query1 = $this->mhs->orderBy("angkatan", "desc")
+            ->orderBy("nama", "asc")
+            ->get()
+            ->getResult();
+
+        $angkatan_list = $this->mhs->select("DISTINCT(angkatan) as angkatan")
+            ->orderBy("angkatan", "desc")
+            ->get()
             ->getResult();
 
         return view(
             "admin/sekre/data/dashboard",
-            ["data" => $query1, "breadcrumbs" => $breadcrumbs]
+            ["data" => $query1, "angkatan_list" => $angkatan_list, "breadcrumbs" => $breadcrumbs]
         );
     }
 

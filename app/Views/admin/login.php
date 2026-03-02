@@ -20,6 +20,7 @@
     <p class="tx-gray-700 tx-12">Silakan lakukan login terlebih dahulu</p>
 
     <form action="<?= base_url("admin/login") ?>" method="post" data-parsley-validate class="animated fadeInUp">
+    <?= csrf_field() ?>
         <div class="form-group">
             <label for="username" class="tx-bold">NRP <span class="tx-danger">*</span></label>
             <input id="username" name="username" type="text" class="form-control" placeholder="Masukkan NRP" required data-parsley-required-message="NRP wajib diisi!">
