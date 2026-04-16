@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <?php
-$segment3 = (string) current_url(true)->getSegment(3);
-$segment4 = (string) current_url(true)->getSegment(4);
-$segment5 = (string) current_url(true)->getSegment(5);
+$segments = current_url(true)->getSegments();
+
+// Normalize admin routes so existing menu checks remain consistent.
+if (($segments[0] ?? '') === 'admin') {
+    array_shift($segments);
+}
+
+$segment3 = (string) ($segments[0] ?? '');
+$segment4 = (string) ($segments[1] ?? '');
+$segment5 = (string) ($segments[2] ?? '');
 $currentAdminPage = implode('/', array_filter([$segment3, $segment4, $segment5]));
 
 $datatablePages = [
@@ -19,14 +26,18 @@ $datatablePages = [
     'sekre/piket/ruangan',
 ];
 
-$useDataTables = trim($this->renderSection('use_datatables')) !== '' || in_array($currentAdminPage, $datatablePages, true);
-$useDataTablesButtons = $useDataTables || trim($this->renderSection('use_datatables_buttons')) !== '';
-$useDataTablesExport = trim($this->renderSection('use_datatables_export')) !== '';
-$useSelect2 = trim($this->renderSection('use_select2')) !== '' || $useDataTables || in_array($currentAdminPage, ['hadir/tambah', 'hadir/ubah'], true);
-$useParsley = trim($this->renderSection('use_parsley')) !== '' || true;
-$useChart = trim($this->renderSection('use_chart')) !== '' || $currentAdminPage === 'beranda';
-$usePrism = trim($this->renderSection('use_prism')) !== '';
-$useJqueryUi = trim($this->renderSection('use_jquery_ui')) !== '';
+$sectionHas = static function ($value): bool {
+    return trim((string) $value) !== '';
+};
+
+$useDataTables = $sectionHas($this->renderSection('use_datatables')) || in_array($currentAdminPage, $datatablePages, true);
+$useDataTablesButtons = $useDataTables || $sectionHas($this->renderSection('use_datatables_buttons'));
+$useDataTablesExport = $sectionHas($this->renderSection('use_datatables_export'));
+$useSelect2 = $sectionHas($this->renderSection('use_select2')) || $useDataTables || in_array($currentAdminPage, ['hadir/tambah', 'hadir/ubah'], true);
+$useParsley = $sectionHas($this->renderSection('use_parsley')) || true;
+$useChart = $sectionHas($this->renderSection('use_chart')) || $currentAdminPage === 'beranda';
+$usePrism = $sectionHas($this->renderSection('use_prism'));
+$useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
 ?>
 <head>
     <meta charset="utf-8">
@@ -106,7 +117,7 @@ $useJqueryUi = trim($this->renderSection('use_jquery_ui')) !== '';
 
     <div class="aside-body">
         <ul class="nav nav-aside">
-            <li class="nav-item <?= (current_url(true)->getSegment(3)) === "beranda" ? "active" : "" ?>">
+            <li class="nav-item <?= $segment3 === "beranda" ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/beranda") ?>" class="nav-link">
                     <i data-feather="home"></i> <span>Beranda</span></a>
             </li>
@@ -114,80 +125,80 @@ $useJqueryUi = trim($this->renderSection('use_jquery_ui')) !== '';
             <li class="nav-label mg-t-20">
                 Kehadiran Acara
             </li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "hadir") &&
-            ((current_url(true)->getSegment(4)) === "dashboard") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "hadir") &&
+            ($segment4 === "dashboard") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/hadir/dashboard") ?>" class="nav-link">
                     <i data-feather="list"></i> <span>Daftar Acara</span></a>
             </li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "hadir") &&
-            ((current_url(true)->getSegment(4)) === "rekap") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "hadir") &&
+            ($segment4 === "rekap") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/hadir/rekap") ?>" class="nav-link">
                     <i data-feather="file-text"></i> <span>Rekap Kehadiran</span></a>
             </li>
 
             <li class="nav-label mg-t-20">Rapor Fungsionaris</li>
             <?php if(session()->get("id_pengurus") < 40000): ?>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "rapor") &&
-            ((current_url(true)->getSegment(4)) === "dashboard") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "rapor") &&
+            ($segment4 === "dashboard") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/rapor/dashboard") ?>" class="nav-link">
                     <i data-feather="book"></i> <span>Daftar Rapor</span></a>
             </li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "rapor") &&
-            ((current_url(true)->getSegment(4)) === "isi") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "rapor") &&
+            ($segment4 === "isi") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/rapor/isi") ?>" class="nav-link">
                     <i data-feather="edit"></i> <span>Isi Penilaian</span></a>
             </li>
             <?php endif; ?>
             <?php if(session()->get("id_pengurus") >= 40000): ?>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "rapor") &&
-            ((current_url(true)->getSegment(4)) === "hasil") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "rapor") &&
+            ($segment4 === "hasil") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/rapor/hasil") ?>" class="nav-link">
                     <i data-feather="book"></i> <span>Hasil Penilaian</span></a>
             </li>
             <?php endif; ?>
 
             <li class="nav-label mg-t-20">Sekretariat</li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "sekre") &&
-            ((current_url(true)->getSegment(4)) === "piket")  &&
-            ((current_url(true)->getSegment(5)) === "dashboard") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "sekre") &&
+            ($segment4 === "piket")  &&
+            ($segment5 === "dashboard") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/sekre/piket/dashboard") ?>" class="nav-link">
                     <i data-feather="check-square"></i> <span>Kehadiran Piket</span></a>
             </li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "sekre") &&
-            ((current_url(true)->getSegment(4)) === "piket") &&
-            ((current_url(true)->getSegment(5)) === "riwayat") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "sekre") &&
+            ($segment4 === "piket") &&
+            ($segment5 === "riwayat") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/sekre/piket/riwayat") ?>" class="nav-link">
                 <i data-feather="clock"></i> <span>Riwayat Piket</span></a>
             </li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "sekre") &&
-            ((current_url(true)->getSegment(4)) === "piket")  &&
-            ((current_url(true)->getSegment(5)) === "ruangan") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "sekre") &&
+            ($segment4 === "piket")  &&
+            ($segment5 === "ruangan") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/sekre/piket/ruangan") ?>" class="nav-link">
                     <i data-feather="home"></i> <span>Peminjaman Ruangan</span></a>
             </li>
             <?php if(session()->get("id_pengurus") < 20000): ?>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "sekre") &&
-            ((current_url(true)->getSegment(4)) === "piket") &&
-            ((current_url(true)->getSegment(5)) === "kontrol") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "sekre") &&
+            ($segment4 === "piket") &&
+            ($segment5 === "kontrol") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/sekre/piket/kontrol") ?>" class="nav-link">
                     <i data-feather="trending-up"></i> <span>Kontrol Piket</span></a>
             </li>
             <?php endif; ?>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "sekre") &&
-            ((current_url(true)->getSegment(4)) === "data") &&
-            ((current_url(true)->getSegment(5)) === "dashboard") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "sekre") &&
+            ($segment4 === "data") &&
+            ($segment5 === "dashboard") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/sekre/data/dashboard") ?>" class="nav-link">
                     <i data-feather="info"></i> <span>Data Mahasiswa</span></a>
             </li>
 
             <li class="nav-label mg-t-20">Menu Lain</li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "survei") &&
-            ((current_url(true)->getSegment(4)) === "dashboard") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "survei") &&
+            ($segment4 === "dashboard") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/survei/dashboard") ?>" class="nav-link">
                     <i data-feather="bar-chart-2"></i> <span>Daftar Survei</span></a>
             </li>
-            <li class="nav-item <?= ((current_url(true)->getSegment(3)) === "akun") &&
-            ((current_url(true)->getSegment(4)) === "ubah") ? "active" : "" ?>">
+            <li class="nav-item <?= ($segment3 === "akun") &&
+            ($segment4 === "ubah") ? "active" : "" ?>">
                 <a href="<?= base_url("/admin/akun/ubah") ?>" class="nav-link">
                     <i data-feather="user-check"></i> <span>Ubah Profil</span>
                     <span class="badge badge-danger ml-auto animated infinite slower flash" id="profil_lengkap"></span>
