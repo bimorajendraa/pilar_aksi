@@ -5,6 +5,10 @@
     Admin HMSI | Hadir | Dashboard
 <?= $this->endSection() ?>
 
+<?= $this->section("use_datatables") ?>1<?= $this->endSection() ?>
+<?= $this->section("use_datatables_buttons") ?>1<?= $this->endSection() ?>
+<?= $this->section("use_select2") ?>1<?= $this->endSection() ?>
+
 <?= $this->section("breadcrumbs") ?>
     <?= $breadcrumbs ?>
 <?= $this->endSection() ?>

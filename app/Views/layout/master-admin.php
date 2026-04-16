@@ -1,5 +1,33 @@
 <!DOCTYPE html>
 <html lang="id">
+<?php
+$segment3 = (string) current_url(true)->getSegment(3);
+$segment4 = (string) current_url(true)->getSegment(4);
+$segment5 = (string) current_url(true)->getSegment(5);
+$currentAdminPage = implode('/', array_filter([$segment3, $segment4, $segment5]));
+
+$datatablePages = [
+    'hadir/dashboard',
+    'hadir/rekap',
+    'hadir/rekap_detail',
+    'survei/dashboard',
+    'survei/rekap',
+    'rapor/isi',
+    'sekre/data/dashboard',
+    'sekre/piket/riwayat',
+    'sekre/piket/kontrol',
+    'sekre/piket/ruangan',
+];
+
+$useDataTables = trim($this->renderSection('use_datatables')) !== '' || in_array($currentAdminPage, $datatablePages, true);
+$useDataTablesButtons = $useDataTables || trim($this->renderSection('use_datatables_buttons')) !== '';
+$useDataTablesExport = trim($this->renderSection('use_datatables_export')) !== '';
+$useSelect2 = trim($this->renderSection('use_select2')) !== '' || $useDataTables || in_array($currentAdminPage, ['hadir/tambah', 'hadir/ubah'], true);
+$useParsley = trim($this->renderSection('use_parsley')) !== '' || true;
+$useChart = trim($this->renderSection('use_chart')) !== '' || $currentAdminPage === 'beranda';
+$usePrism = trim($this->renderSection('use_prism')) !== '';
+$useJqueryUi = trim($this->renderSection('use_jquery_ui')) !== '';
+?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,19 +38,31 @@
 
     <link href="<?= base_url("main/lib/@fortawesome/fontawesome-free/css/all.min.css") ?>" rel="stylesheet">
 
-    <link href="<?= base_url("main/lib/datatables.net-dt/css/jquery.dataTables.min.css") ?>" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap4.min.css">
-    <link href="<?= base_url("main/lib/select2/css/select2.min.css") ?>" rel="stylesheet">
-
     <link href="<?= base_url("main/lib/ionicons/css/ionicons.min.css") ?>" rel="stylesheet">
     <link href="<?= base_url("main/lib/typicons.font/typicons.css") ?>" rel="stylesheet">
-    <link href="<?= base_url("main/lib/prismjs/themes/prism-vs.css") ?>" rel="stylesheet">
     <link href="<?= base_url("main/lib/animate.css/animate.min.css") ?>" rel="stylesheet">
 
     <link href="<?= base_url("main/assets/css/dashforge.min.css") ?>" rel="stylesheet">
     <link href="<?= base_url("main/assets/css/dashforge.demo.css") ?>" rel="stylesheet">
 
+    <?php if ($useDataTables): ?>
+        <link href="<?= base_url("main/lib/datatables.net-dt/css/jquery.dataTables.min.css") ?>" rel="stylesheet">
+    <?php endif; ?>
+    <?php if ($useDataTablesButtons): ?>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap4.min.css">
+    <?php endif; ?>
+    <?php if ($useSelect2): ?>
+        <link href="<?= base_url("main/lib/select2/css/select2.min.css") ?>" rel="stylesheet">
+    <?php endif; ?>
+    <?php if ($usePrism): ?>
+        <link href="<?= base_url("main/lib/prismjs/themes/prism-vs.css") ?>" rel="stylesheet">
+    <?php endif; ?>
+    <?= $this->renderSection("page_css") ?>
+
     <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
         @media only print {
             .aside, .content-header {
                 display: none !important;
@@ -41,9 +81,14 @@
             display: inline-block;
             white-space: nowrap;
         }
+        <?php if (!$useSelect2): ?>
+        .select2-results__option {
+            font-size: inherit;
+        }
+        <?php endif; ?>
     </style>
 </head>
-<body class="page-profile tx-lexend">
+<body class="page-profile">
 
 <aside class="aside aside-fixed">
     <div class="aside-header">
@@ -254,30 +299,45 @@
 </div>
 
 <script src="<?= base_url("main/lib/jquery/jquery.min.js") ?>"></script>
+<?php if ($useJqueryUi): ?>
 <script src="<?= base_url("main/lib/jqueryui/jquery-ui.min.js") ?>"></script>
+<?php endif; ?>
 <script src="<?= base_url("main/lib/bootstrap/js/bootstrap.bundle.min.js") ?>"></script>
-<script src="<?= base_url("main/lib/feather-icons/feather.min.js") ?>"></script>
+<script src="<?= base_url("main/lib/feather-icons/feather.min.js") ?>" defer></script>
+<?php if ($useParsley): ?>
 <script src="<?= base_url("main/lib/parsleyjs/parsley.min.js") ?>"></script>
-<script src="<?= base_url("main/lib/perfect-scrollbar/perfect-scrollbar.min.js") ?>"></script>
+<?php endif; ?>
+<script src="<?= base_url("main/lib/perfect-scrollbar/perfect-scrollbar.min.js") ?>" defer></script>
+<?php if ($usePrism): ?>
 <script src="<?= base_url("main/lib/prismjs/prism.js") ?>"></script>
+<?php endif; ?>
 
+<?php if ($useDataTables): ?>
 <script src="<?= base_url("main/lib/datatables.net-dt/js/dataTables.dataTables.min.js") ?>"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<?php endif; ?>
+<?php if ($useDataTablesButtons): ?>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js"></script>
+<?php endif; ?>
+<?php if ($useDataTablesExport): ?>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-
+<?php endif; ?>
+<?php if ($useSelect2): ?>
 <script src="<?= base_url("main/lib/select2/js/select2.full.min.js") ?>"></script>
+<?php endif; ?>
+<?php if ($useChart): ?>
 <script src="<?= base_url("main/lib/chart.js/Chart.bundle.min.js") ?>"></script>
+<?php endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/jquery.marquee@1.6.0/jquery.marquee.min.js"></script>
 
-<script src="<?= base_url("main/assets/js/dashforge.js") ?>"></script>
-<script src="<?= base_url("main/assets/js/dashforge.aside.js") ?>"></script>
+<?= $this->renderSection("vendor_js") ?>
+
+<script src="<?= base_url("main/assets/js/dashforge.js") ?>" defer></script>
+<script src="<?= base_url("main/assets/js/dashforge.aside.js") ?>" defer></script>
 
 <script type="text/javascript">
     function deleteConfirm(url){
@@ -333,9 +393,13 @@
 
 <?php echo $this->renderSection("js") ?>
 
+<?php if ($useDataTables && $useSelect2): ?>
 <script type="text/javascript">
-    $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
-    $(".select2-container").addClass("tx-12");
+    if (typeof $.fn.select2 === "function" && $('.dataTables_length select').length) {
+        $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        $(".select2-container").addClass("tx-12");
+    }
 </script>
+<?php endif; ?>
 </body>
 </html>

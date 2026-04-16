@@ -4,6 +4,9 @@
 Admin HMSI | Beranda
 <?= $this->endSection() ?>
 
+<?= $this->section("use_chart") ?>1<?= $this->endSection() ?>
+<?= $this->section("use_parsley") ?>1<?= $this->endSection() ?>
+
 <?= $this->section("halaman") ?>
 Selamat Datang <span class="tx-primary">Arek Niskalarasi ✨</span>
 <?= $this->endSection() ?>
