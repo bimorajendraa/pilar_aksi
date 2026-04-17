@@ -157,36 +157,80 @@ class HadirControl extends BaseController
 
         $db = \Config\Database::connect();
         $kode_escaped = $db->escape($kode_acara);
-        $query1 = $db->query("
-            SELECT a.*, COALESCE(hc.jumlah, 0) AS jumlah
-            FROM acara a
-            LEFT JOIN (SELECT kode_acara, COUNT(*) AS jumlah FROM hadir GROUP BY kode_acara) hc ON hc.kode_acara = a.kode_acara
-            WHERE a.kode_acara = {$kode_escaped}
-            LIMIT 1
-        ")->getRow();
+        $query1 = null;
+        try {
+            $result = $db->query("
+                SELECT a.*, COALESCE(hc.jumlah, 0) AS jumlah
+                FROM acara a
+                LEFT JOIN (SELECT kode_acara, COUNT(*) AS jumlah FROM hadir GROUP BY kode_acara) hc ON hc.kode_acara = a.kode_acara
+                WHERE a.kode_acara = {$kode_escaped}
+                LIMIT 1
+            ");
+            if ($result !== false) {
+                $query1 = $result->getRow();
+            }
+        } catch (\Throwable $e) {
+            $query1 = null;
+        }
 
-        $query2 = $this->pengurus->where("id_pengurus",$query1->narahubung)
-            ->join("mhs","pengurus.nrp = mhs.nrp")
+        if ($query1 === null) {
+            $query1 = $this->acara->where("kode_acara", $kode_acara)->first();
+            if ($query1 === null) {
+                return view("errors/404");
+            }
+            $query1->jumlah = 0;
+        }
+
+        if (!isset($query1->jumlah)) {
+            $query1->jumlah = 0;
+        }
+
+        $query2 = $this->pengurus->select(["mhs.nama", "mhs.nrp"])
+            ->where("id_pengurus", $query1->narahubung)
+            ->join("mhs", "pengurus.nrp = mhs.nrp", "left")
             ->first();
 
-        $qr_cache_path = WRITEPATH . "cache/qr_{$kode_acara}.png";
-        if (!file_exists($qr_cache_path)) {
-            $writer = new PngWriter();
-            $qr_code = QrCode::create(base_url("/$query1->kode_acara"))
-                ->setEncoding(new Encoding('UTF-8'))
-                ->setErrorCorrectionLevel(new ErrorCorrectionLevelMedium())
-                ->setSize(500)
-                ->setMargin(20)
-                ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
-                ->setForegroundColor(new Color(0, 0, 0))
-                ->setBackgroundColor(new Color(255, 255, 255));
-            $logo = Logo::create(FCPATH . 'pic/niskalarasi-logo.png')
-                ->setResizeToWidth(100);
-
-            $hasil = $writer->write($qr_code, $logo);
-            file_put_contents($qr_cache_path, $hasil->getString());
+        if ($query2 === null) {
+            $query2 = (object) [
+                "nama" => "Narahubung tidak ditemukan",
+                "nrp" => "-"
+            ];
         }
-        $hasil_url = 'data:image/png;base64,' . base64_encode(file_get_contents($qr_cache_path));
+
+        $hasil_url = "";
+        $qr_cache_path = WRITEPATH . "cache/qr_{$kode_acara}.png";
+        $qr_binary = file_exists($qr_cache_path) ? (string) @file_get_contents($qr_cache_path) : "";
+
+        if ($qr_binary === "") {
+            try {
+                $writer = new PngWriter();
+                $qr_code = QrCode::create(base_url("/$query1->kode_acara"))
+                    ->setEncoding(new Encoding('UTF-8'))
+                    ->setErrorCorrectionLevel(new ErrorCorrectionLevelMedium())
+                    ->setSize(500)
+                    ->setMargin(20)
+                    ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
+                    ->setForegroundColor(new Color(0, 0, 0))
+                    ->setBackgroundColor(new Color(255, 255, 255));
+
+                $logo_path = FCPATH . "pic/niskalarasi-logo.png";
+                if (is_file($logo_path)) {
+                    $logo = Logo::create($logo_path)->setResizeToWidth(100);
+                    $hasil = $writer->write($qr_code, $logo);
+                } else {
+                    $hasil = $writer->write($qr_code);
+                }
+
+                $qr_binary = $hasil->getString();
+                @file_put_contents($qr_cache_path, $qr_binary);
+            } catch (\Throwable $e) {
+                $qr_binary = "";
+            }
+        }
+
+        if ($qr_binary !== "") {
+            $hasil_url = "data:image/png;base64," . base64_encode($qr_binary);
+        }
 
         return view("admin/hadir/detail",
             ["data" => $query1, "data2" => $query2, "data3" => $hasil_url, "breadcrumbs" => $breadcrumbs]);

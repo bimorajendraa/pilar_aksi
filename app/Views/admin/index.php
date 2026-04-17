@@ -8,7 +8,7 @@ Admin HMSI | Beranda
 <?= $this->section("use_parsley") ?>1<?= $this->endSection() ?>
 
 <?= $this->section("halaman") ?>
-Selamat Datang <span class="tx-primary">Arek Niskalarasi ✨</span>
+Selamat Datang <span class="tx-primary">Arek Pilar Aksi ✨</span>
 <?= $this->endSection() ?>
 
 <?= $this->section("konten") ?>

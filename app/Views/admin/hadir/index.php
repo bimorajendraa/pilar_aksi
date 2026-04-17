@@ -106,6 +106,10 @@
 
     $('#daftar-link-acara').DataTable({
         <?= $this->include("layout/datatable.txt") ?>
+        language: {
+            emptyTable: 'Belum terdapat acara.',
+            zeroRecords: 'Belum terdapat acara yang sesuai.'
+        }
     });
 </script>
 

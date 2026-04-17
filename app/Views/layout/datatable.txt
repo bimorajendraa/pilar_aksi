@@ -23,8 +23,8 @@ language:
     info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
     infoEmpty: "Menampilkan 0 data",
     infoFiltered: "(Disaring dari _MAX_ data)",
-    emptyTable: "Tidak ada data yang ditemukan",
-    zeroRecords:  "Tidak ada data yang ditemukan",
+    emptyTable: "Belum terdapat data.",
+    zeroRecords:  "Belum terdapat data yang sesuai.",
 },
 drawCallback: function()
 {

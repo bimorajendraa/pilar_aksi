@@ -62,6 +62,10 @@
 <script>
     $('#rekap-acara').DataTable({
         <?= $this->include("layout/datatable.txt") ?>
+        language: {
+            emptyTable: 'Belum terdapat rekap acara.',
+            zeroRecords: 'Belum terdapat rekap acara yang sesuai.'
+        }
     });
 </script>
 

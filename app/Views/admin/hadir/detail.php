@@ -70,13 +70,19 @@ Detail Tautan Kehadiran Acara
     <div class="col-12 col-md-5 mg-t-30 mg-md-t-0">
         <div class="card bg-white hasil">
             <div class="card-body mg-t-30 mg-b-30">
-                <div class="tx-center"><img src="<?= $data3 ?>" alt="qr-code" style="max-width: 250px;"></div>
+                <div class="tx-center">
+                    <?php if($data3 !== ""): ?>
+                        <img src="<?= $data3 ?>" alt="qr-code" style="max-width: 250px;">
+                    <?php else: ?>
+                        <span class="tx-danger tx-bold">QR belum dapat dibuat.</span>
+                    <?php endif; ?>
+                </div>
 
                 <div class="mg-t-20"></div>
                 <div class="input-group">
                     <label for="tautan"></label>
                     <input type="text" class="form-control tx-center tx-bold tx-20"
-                        name="tautan" id="tautan" value="hmsi-its.my.id/<?= $data->kode_acara ?>" readonly>
+                        name="tautan" id="tautan" value="<?= base_url("/$data->kode_acara") ?>" readonly>
                     <div class="input-group-append">
                     <button type="button" onclick="copyLink()" class="btn btn-primary"
                                 data-container="body" data-toggle="popover" data-placement="bottom"
