@@ -213,7 +213,7 @@ class HadirControl extends BaseController
                     ->setForegroundColor(new Color(0, 0, 0))
                     ->setBackgroundColor(new Color(255, 255, 255));
 
-                $logo_path = FCPATH . "pic/niskalarasi-logo.png";
+                $logo_path = FCPATH . "pic/pilar-aksi-logo.png";
                 if (is_file($logo_path)) {
                     $logo = Logo::create($logo_path)->setResizeToWidth(100);
                     $hasil = $writer->write($qr_code, $logo);

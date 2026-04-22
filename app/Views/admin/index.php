@@ -202,12 +202,18 @@ Selamat Datang <span class="tx-primary">Arek Pilar Aksi ✨</span>
 
 <script type="text/javascript">
     $(function() {
+        const donutLabels = [
+            <?php foreach ($data1 as $dept): ?>
+            <?= json_encode($dept->nama_departemen, JSON_UNESCAPED_UNICODE) ?>,
+            <?php endforeach; ?>
+        ];
+
         // For a pie chart
         let ctx2 = document.getElementById('chartDonut');
         new Chart(ctx2, {
             type: 'doughnut',
             data: {
-                labels: ["Head of HMSI", "Vice Head", "General Secretary", "General Treasury", "Entrepreneurship", "External Affairs", "Human Resource Development", "Information Media", "Internal Affairs", "Research and Technology Applications", "Social Development", "Student Welfare", "Technology Development"],
+                labels: donutLabels,
                 datasets: [{
                     data: [
                         <?php
@@ -302,7 +308,7 @@ Selamat Datang <span class="tx-primary">Arek Pilar Aksi ✨</span>
 
     $.ajax({
         type: "GET",
-        url: "/ajax/cek_password/" + <?= session()->get("id_pengurus") ?>,
+        url: "<?= base_url('ajax/cek_password') ?>/" + <?= session()->get("id_pengurus") ?>,
         dataType: "json",
 
         success: function (data)

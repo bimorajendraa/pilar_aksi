@@ -32,7 +32,12 @@ class Ajax extends BaseController
 
     public function cek_narahubung()
     {
-        $nama = $this->request->getGet("key");
+        $nama = trim((string) $this->request->getGet("key"));
+
+        if ($nama === '') {
+            return json_encode([]);
+        }
+
         $pengurus = new Pengurus();
         $query1 = $pengurus->select(["nama","id_pengurus","pengurus.nrp"])
             ->join("mhs","pengurus.nrp = mhs.nrp")
@@ -60,6 +65,10 @@ class Ajax extends BaseController
         $query1 = $pengurus->select(["password"])
             ->where("id_pengurus",$id_pengurus)
             ->first();
+
+        if ($query1 === null || !isset($query1->password)) {
+            return json_encode("aman");
+        }
 
         return ($query1->password === '$2y$10$VMP7SX97IwLIkP2lOTIs6etJ8uJHLiiDIQaE6Weh8VCrAuNukNVsa') ?
             json_encode("ganti") : json_encode("aman");

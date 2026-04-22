@@ -6,7 +6,7 @@
 
     <title><?php $this->renderSection("title") ?></title>
 
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/niskalarasi-favicon-logo.png") ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/pilar-aksi-favicon.png") ?>">
 
     <link href="<?= base_url("main/lib/@fortawesome/fontawesome-free/css/all.min.css") ?>" rel="stylesheet">
     <link href="<?= base_url("main/lib/animate.css/animate.min.css") ?>" rel="stylesheet">
@@ -19,7 +19,7 @@
         <nav class="navbar navbar-light bg-white">
             <a href="<?= base_url("/admin/beranda") ?>" class="navbar-brand">
                 <img src="<?= base_url("pic/hmsi-mini.jpg") ?>" height="45" alt="" class="aside-logo">
-                <img src="<?= base_url("pic/niskalarasi-logo.png") ?>" height="37" alt="" class="aside-logo">
+                <img src="<?= base_url("pic/pilar-aksi-logo.png") ?>" height="37" alt="" class="aside-logo">
             </a>
 
             <a href="<?= base_url("/admin/login") ?>" class="mg-l-auto">Login Fungsionaris</a>

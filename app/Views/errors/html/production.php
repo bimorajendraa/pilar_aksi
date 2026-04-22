@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="robots" content="noindex">
+	<link rel="icon" type="image/png" sizes="16x16" href="/pic/pilar-aksi-favicon.png">
 
 	<title>Whoops!</title>
 

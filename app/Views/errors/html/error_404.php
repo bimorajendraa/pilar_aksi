@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
+	<link rel="icon" type="image/png" sizes="16x16" href="/pic/pilar-aksi-favicon.png">
 	<title>404 Page Not Found</title>
 
 	<style>

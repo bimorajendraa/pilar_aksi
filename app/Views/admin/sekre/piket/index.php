@@ -14,6 +14,10 @@ Kehadiran Piket Ruang Kesekretariatan
 <?= $this->endSection() ?>
 
 <?= $this->section("konten") ?>
+<?php
+    $jadwalWajib = $data2->jadwal_wajib ?? null;
+    $statusJadwal = (string) ($data2->status ?? '0');
+?>
 
 <div class="row">
     <form action="<?= base_url("admin/sekre/piket/hadir") ?>" method="post" data-parsley-validate class="col-md-6 col-lg-4 mg-b-10">
@@ -22,7 +26,7 @@ Kehadiran Piket Ruang Kesekretariatan
             <div class="marker marker-ribbon marker-primary pos-absolute t-10 l-0">Kedatangan piket<br></div>
             <p class="mg-t-30">
                 <span class="tx-gray-700">Status Piket:</span><br><b>
-                    <?= ($data2->jadwal_wajib === date("Y-m-d")) ? "Jadwal piket wajib" : "BUKAN jadwal piket wajib" ?></b>
+                    <?= ($jadwalWajib === date("Y-m-d")) ? "Jadwal piket wajib" : "BUKAN jadwal piket wajib" ?></b>
             </p>
             <p>
                 <span class="tx-gray-700">Waktu Mulai:</span><br><b>
@@ -56,10 +60,13 @@ Kehadiran Piket Ruang Kesekretariatan
                 <span class="tx-bold">Jadwal Piket Wajib</span><br>
                 <span class="">
                     <?php
-                    $status = $data2->status ?? 0;
-                    echo ($status === "0") ?
-                        (new IntlDateFormatter("id_ID",IntlDateFormatter::FULL,IntlDateFormatter::SHORT,"Asia/Jakarta",IntlDateFormatter::GREGORIAN,"eeee, dd MMMM yyyy'"))->format(new DateTime($data2->jadwal_wajib))
-                        : "Sudah Melaksanakan";
+                    if ($jadwalWajib === null || $jadwalWajib === '') {
+                        echo 'Belum terjadwal';
+                    } elseif ($statusJadwal === "0") {
+                        echo (new IntlDateFormatter("id_ID",IntlDateFormatter::FULL,IntlDateFormatter::SHORT,"Asia/Jakarta",IntlDateFormatter::GREGORIAN,"eeee, dd MMMM yyyy'"))->format(new DateTime($jadwalWajib));
+                    } else {
+                        echo "Sudah Melaksanakan";
+                    }
                     ?>
                 </span><br><br>
                 <span class="tx-bold">Jumlah Piket Tidak Wajib</span><br>
@@ -74,7 +81,7 @@ Kehadiran Piket Ruang Kesekretariatan
             <div class="marker marker-ribbon marker-primary pos-absolute t-10 l-0">Kepulangan piket<br></div>
             <p class="mg-t-30">
                 <span class="tx-gray-700">Status Piket:</span><br><b>
-                    <?= ($data2->jadwal_wajib == date("Y-m-d")) ? "Jadwal piket wajib" : "BUKAN jadwal piket wajib" ?></b>
+                    <?= ($jadwalWajib == date("Y-m-d")) ? "Jadwal piket wajib" : "BUKAN jadwal piket wajib" ?></b>
             </p>
             <p>
                 <span class="tx-gray-700">Waktu Selesai:</span><br><b>

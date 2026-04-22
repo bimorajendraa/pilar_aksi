@@ -5,6 +5,10 @@
     Admin HMSI | Hadir | Rekap Detail
 <?= $this->endSection() ?>
 
+<?= $this->section("use_datatables") ?>1<?= $this->endSection() ?>
+<?= $this->section("use_datatables_buttons") ?>1<?= $this->endSection() ?>
+<?= $this->section("use_datatables_export") ?>1<?= $this->endSection() ?>
+
 <?= $this->section("breadcrumbs") ?>
 <?= $breadcrumbs ?>
 <?= $this->endSection() ?>
@@ -64,10 +68,13 @@
 <?= $this->section("js") ?>
 
 <script>
-    $('#rekap-detail').DataTable({
-        dom: "Bfrtip",
-        buttons: {
-            buttons: [
+    const rekapDetailConfig = {
+        <?= $this->include("layout/datatable.txt") ?>
+    };
+
+    if ($.fn.dataTable && $.fn.dataTable.Buttons) {
+        rekapDetailConfig.dom = "Bfrtip";
+        rekapDetailConfig.buttons = [
                 {
                     extend: "print",
                     text: "<i data-feather='file-text'></i> Ekspor PDF",
@@ -107,10 +114,10 @@
                     extend: "pageLength",
                     className: "btn btn-outline-primary bg-white"
                 },
-            ]
-        },
-        <?= $this->include("layout/datatable.txt") ?>
-    });
+            ];
+    }
+
+    $('#rekap-detail').DataTable(rekapDetailConfig);
 </script>
 
 <?= $this->endSection() ?>

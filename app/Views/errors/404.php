@@ -6,7 +6,7 @@
 
     <title>Kehadiran Acara HMSI | 404</title>
 
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/niskalarasi-logo.png") ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/pilar-aksi-favicon.png") ?>">
 
     <link href="<?= base_url("main/assets/css/dashforge.min.css") ?>" rel="stylesheet">
 </head>

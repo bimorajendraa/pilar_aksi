@@ -6,7 +6,7 @@
 
     <title>Admin HMSI | Login</title>
 
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/niskalarasi-favicon-logo.png") ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/pilar-aksi-favicon.png") ?>">
 
     <link href="<?= base_url("main/lib/@fortawesome/fontawesome-free/css/all.min.css") ?>" rel="stylesheet">
 

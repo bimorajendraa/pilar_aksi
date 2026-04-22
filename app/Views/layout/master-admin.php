@@ -17,6 +17,7 @@ $datatablePages = [
     'hadir/dashboard',
     'hadir/rekap',
     'hadir/rekap_detail',
+    'hadir/rekap/detail',
     'survei/dashboard',
     'survei/rekap',
     'rapor/isi',
@@ -30,9 +31,15 @@ $sectionHas = static function ($value): bool {
     return trim((string) $value) !== '';
 };
 
+$datatableExportPages = [
+    'hadir/rekap',
+    'hadir/rekap/detail',
+    'hadir/rekap_detail',
+];
+
 $useDataTables = $sectionHas($this->renderSection('use_datatables')) || in_array($currentAdminPage, $datatablePages, true);
 $useDataTablesButtons = $useDataTables || $sectionHas($this->renderSection('use_datatables_buttons'));
-$useDataTablesExport = $sectionHas($this->renderSection('use_datatables_export'));
+$useDataTablesExport = $sectionHas($this->renderSection('use_datatables_export')) || in_array($currentAdminPage, $datatableExportPages, true);
 $useSelect2 = $sectionHas($this->renderSection('use_select2')) || $useDataTables || in_array($currentAdminPage, ['hadir/tambah', 'hadir/ubah'], true);
 $useParsley = $sectionHas($this->renderSection('use_parsley')) || true;
 $useChart = $sectionHas($this->renderSection('use_chart')) || $currentAdminPage === 'beranda';
@@ -45,7 +52,7 @@ $useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
 
     <title><?= $this->renderSection("title") ?></title>
 
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/niskalarasi-favicon-logo.png") ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url("pic/pilar-aksi-favicon.png") ?>">
 
     <link href="<?= base_url("main/lib/@fortawesome/fontawesome-free/css/all.min.css") ?>" rel="stylesheet">
 
@@ -92,6 +99,70 @@ $useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
             display: inline-block;
             white-space: nowrap;
         }
+        <?php if ($useDataTables): ?>
+        .content-body table.dataTable.no-footer {
+            border-bottom: 0 !important;
+        }
+        .content-body table.dataTable {
+            border-color: #e2e8f3 !important;
+        }
+        .content-body table.dataTable thead th,
+        .content-body table.dataTable thead td {
+            border-bottom: 0 !important;
+        }
+        .content-body table.dataTable tbody td,
+        .content-body table.dataTable tbody th {
+            border-top: 1px solid #ebedf2 !important;
+        }
+        .content-body table.dataTable thead > tr > th.sorting,
+        .content-body table.dataTable thead > tr > th.sorting_asc,
+        .content-body table.dataTable thead > tr > th.sorting_desc {
+            padding-right: 26px;
+            background-image: none !important;
+            background-position: right 8px center;
+        }
+        .content-body table.dataTable thead > tr > th.sorting::before,
+        .content-body table.dataTable thead > tr > th.sorting::after,
+        .content-body table.dataTable thead > tr > th.sorting_asc::before,
+        .content-body table.dataTable thead > tr > th.sorting_desc::before {
+            display: none !important;
+            content: none !important;
+        }
+        .content-body table.dataTable thead > tr > th.sorting_asc::after,
+        .content-body table.dataTable thead > tr > th.sorting_desc::after {
+            right: 8px;
+        }
+        .content-body .dataTables_wrapper .dataTables_paginate .paginate_button {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 12px !important;
+            margin: 0 3px;
+            border: 1px solid #d9dee8 !important;
+            border-radius: 8px;
+            color: #344563 !important;
+            background: #fff !important;
+            line-height: 34px;
+            transition: all .15s ease;
+        }
+        .content-body .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            border-color: #c5d0e3 !important;
+            background: #f5f8ff !important;
+            color: #1f2e4d !important;
+        }
+        .content-body .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .content-body .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            border-color: #3f51c6 !important;
+            background: #3f51c6 !important;
+            color: #fff !important;
+            box-shadow: 0 6px 16px rgba(63, 81, 198, .2);
+        }
+        .content-body .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .content-body .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+            opacity: .5;
+            cursor: not-allowed;
+            background: #fff !important;
+        }
+        <?php endif; ?>
         <?php if (!$useSelect2): ?>
         .select2-results__option {
             font-size: inherit;
@@ -106,7 +177,7 @@ $useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
         <div class="d-flex">
             <a href="<?= base_url("/admin/beranda") ?>" class="aside-logo">
                 <img src="<?= base_url("pic/hmsi-mini.jpg") ?>" height="45" alt="" class="aside-logo">
-                <img src="<?= base_url("pic/niskalarasi-logo.png") ?>" height="38" alt="" class="aside-logo">
+                <img src="<?= base_url("pic/pilar-aksi-logo.png") ?>" height="38" alt="" class="aside-logo">
             </a>
         </div>
         <a href="" class="aside-menu-link">
@@ -324,7 +395,7 @@ $useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
 <?php endif; ?>
 
 <?php if ($useDataTables): ?>
-<script src="<?= base_url("main/lib/datatables.net-dt/js/dataTables.dataTables.min.js") ?>"></script>
+<script src="<?= base_url("main/lib/datatables.net/js/jquery.dataTables.min.js") ?>"></script>
 <?php endif; ?>
 <?php if ($useDataTablesButtons): ?>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
@@ -359,7 +430,7 @@ $useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
     let profil = $("#profil_lengkap");
     $.ajax({
         type: "GET",
-        url: "/ajax/cek_pengurus/" + <?= session()->get("id_pengurus") ?>,
+        url: "<?= base_url('ajax/cek_pengurus') ?>/" + <?= session()->get("id_pengurus") ?>,
         dataType: "json",
 
         success: function (data)
@@ -380,7 +451,7 @@ $useJqueryUi = $sectionHas($this->renderSection('use_jquery_ui'));
     const jarak = "&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;"
     $.ajax({
         type: "GET",
-        url: "/ajax/cek_info",
+        url: "<?= base_url('ajax/cek_info') ?>",
         dataType: "json",
 
         success: function (data)
